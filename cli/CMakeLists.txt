@@ -3,6 +3,8 @@ set(EXECUTABLE_FILES
     run.cpp
     convert_to_edgelist.cpp
     graph_generator.cpp
+        bfs_solver_main.cpp
+        vc_domination_main.cpp
 )
 
 foreach (file ${EXECUTABLE_FILES})

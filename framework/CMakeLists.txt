@@ -8,6 +8,8 @@ set(HEADERS
     include/framework/component_structure.hpp
     include/framework/timer.hpp
     include/framework/random.hpp
+        include/framework/bfs_solver.hpp
+        include/framework/vc_domination.hpp
 )
 
 set(SOURCE_FILES
@@ -18,6 +20,9 @@ set(SOURCE_FILES
     src/component_structure.cpp
     src/timer.cpp
     src/random.cpp
+    src/bfs_solver.cpp
+        src/vc_domination.cpp
+
 )
 
 # create a library of the framework
