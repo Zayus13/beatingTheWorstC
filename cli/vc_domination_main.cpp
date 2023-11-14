@@ -28,8 +28,9 @@ int main(int argc, char **argv) {
     }
     std::filesystem::create_directory(directory_name_out);
     int counter = 0;
-
+    pair<int, int> solution;
     unsigned int kernel_size;
+    unsigned int rounds;
 
     for (const auto & entry : std::filesystem::directory_iterator(directory_name_in)) {
         if (!fs::is_regular_file(entry.path())) {
@@ -42,12 +43,14 @@ int main(int argc, char **argv) {
         const std::filesystem::path& file_name_in = entry.path();
         Graph G(file_name_in);
         vc_domination vc(G);
-        kernel_size = vc.get_kernel();
+        solution = vc.get_kernel();
+        kernel_size = solution.first;
+        rounds = solution.second;
         std::filesystem::path file_name_out = directory_name_out / file_name_in.filename();
         file_name_out.replace_extension(".csv");
         std::ofstream output;
         output.open(file_name_out.string());
-        output << kernel_size << std::endl;
+        output << G.n() << "," << G.m() << "," << kernel_size << "," << rounds << std::endl;
         output.close();
 
     }

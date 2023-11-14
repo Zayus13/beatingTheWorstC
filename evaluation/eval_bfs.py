@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import matplotlib.pyplot as plt
 
 if __name__ == '__main__':
     path = ('C:\\Users\\sven_\\Desktop\\Beating the Worst '
@@ -26,14 +27,28 @@ if __name__ == '__main__':
                 df.loc[len(df)] = {'instance': file_name, 'n': int(params[0]), 'm': int(params[1]),
                                    'average_uni': average_one,
                                    'average_bi': average_two}
-df.to_csv('C:\\Users\\sven_\\Desktop\\Beating the Worst Case\\praktikum_beating_the_worst_case_framework\\evaluation\\bfs.csv', index=False)
-# find the best instances, where average_bi diveded by average_uni is the smallest
-df['ratio'] = df['average_bi'] / df['average_uni']
-df = df.sort_values(by='ratio')
-df = df.reset_index(drop=True)
-df = df["instance"]
-df = df.head(200)
-df.to_csv('C:\\Users\\sven_\\Desktop\\Beating the Worst Case\\praktikum_beating_the_worst_case_framework\\evaluation\\bfs_best.csv', index=False)
-
-
-
+    df.to_csv('C:\\Users\\sven_\\Desktop\\Beating the Worst '
+              'Case\\praktikum_beating_the_worst_case_framework\\evaluation\\bfs.csv', index=False)
+    df['ratio'] = df['average_bi'] / df['average_uni']
+    plt.scatter(df['average_uni'], df['average_bi'])
+    plt.xlabel('average_uni')
+    plt.ylabel('average_bi')
+    # sort the dataframe by the ratio and take the worst 200 instances
+    df = df.sort_values(by=['ratio'], ascending=False)
+    df = df.head(200)
+    plt.scatter(df['average_uni'], df['average_bi'])
+    plt.xlabel('average_uni')
+    plt.ylabel('average_bi')
+    plt.savefig('C:\\Users\\sven_\\Desktop\\Beating the Worst '
+                'Case\\praktikum_beating_the_worst_case_framework\\evaluation\\bfs_all.png')
+    plt.clf()
+    plt.scatter(df['average_uni'], df['average_bi'])
+    plt.xlabel('average_uni')
+    plt.ylabel('average_bi')
+    plt.savefig('C:\\Users\\sven_\\Desktop\\Beating the Worst '
+                'Case\\praktikum_beating_the_worst_case_framework\\evaluation\\bfs_worst.png')
+    plt.clf()
+    df = df.drop(columns=['n', 'm', 'average_uni', 'average_bi', 'ratio'])
+    df.sort_values(by=['instance'], inplace=True)
+    df.to_csv('C:\\Users\\sven_\\Desktop\\Beating the Worst '
+              'Case\\praktikum_beating_the_worst_case_framework\\evaluation\\bfs_worst.csv', index=False)

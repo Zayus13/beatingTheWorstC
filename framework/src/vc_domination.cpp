@@ -3,12 +3,12 @@
 //
 
 #include <algorithm>
+#include <iostream>
 #include "framework/vc_domination.hpp"
 
 vc_domination::vc_domination(const Graph &G) {
     graph = G;
     deleted.resize(graph.n(), false);
-
 }
 
 bool vc_domination::compare_neighborhoods(unsigned int domintor, unsigned int dominated) {
@@ -34,19 +34,22 @@ bool vc_domination::compare_neighborhoods(unsigned int domintor, unsigned int do
     return true;
 }
 
-unsigned vc_domination::get_kernel() {
+std::pair<int,int> vc_domination::get_kernel() {
+    unsigned counter = 0;
     //iterate over all edges
     while (true) {
         find_dominated();
         if (dominating.empty()) {
             break;
         }
+        counter++;
         for (unsigned int i: dominating) {
             deleted[i] = true;
         }
         dominating.clear();
     }
-    return std::count(deleted.begin(), deleted.end(), false);
+    delete_all_isolated();
+    return std::pair<int, int>{std::count(deleted.begin(), deleted.end(), false), counter};
 }
 
 void vc_domination::find_dominated() {
@@ -72,6 +75,24 @@ void vc_domination::find_dominated() {
                 dominating.push_back(target);
             }
 
+        }
+    }
+}
+
+void vc_domination::delete_all_isolated() {
+    for (unsigned int i = 0; i < graph.n(); i++) {
+        if (deleted[i]) {
+            continue;
+        }
+        bool isolated = true;
+        for (unsigned int neighbor: graph.neighbors(i)) {
+            if (!deleted[neighbor]) {
+                isolated = false;
+                break;
+            }
+        }
+        if (isolated) {
+            deleted[i] = true;
         }
     }
 }
