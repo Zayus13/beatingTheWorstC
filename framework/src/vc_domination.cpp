@@ -17,8 +17,11 @@ bool vc_domination::compare_neighborhoods(unsigned int domintor, unsigned int do
     std::sort(dominator_neighborhood.begin(), dominator_neighborhood.end());
     std::sort(dominated_neighborhood.begin(), dominated_neighborhood.end());
     unsigned j = 0;
-    for (unsigned int i : dominated_neighborhood) {
+    for (unsigned int i: dominated_neighborhood) {
         if (deleted[i]) {
+            continue;
+        }
+        if (i == domintor) {
             continue;
         }
         while (j < dominator_neighborhood.size() && dominator_neighborhood[j] < i) {
@@ -41,24 +44,29 @@ unsigned vc_domination::get_kernel() {
         for (unsigned int i: dominating) {
             deleted[i] = true;
         }
+        dominating.clear();
     }
-    return graph.n() - std::count(deleted.begin(), deleted.end(), true);
+    return std::count(deleted.begin(), deleted.end(), false);
 }
 
 void vc_domination::find_dominated() {
     unsigned target;
     bool to_be_deleted;
     for (unsigned int i = 0; i < graph.n(); i++) {
-        if (!deleted[i]) {
-            std::vector<unsigned int> neighbors = graph.neighbors(i);
-            for (unsigned int neighbor: neighbors) {
-                if (graph.degree(i) < graph.degree(neighbor)) {
-                    target = neighbor;
-                    to_be_deleted = compare_neighborhoods(neighbor, i);
-                } else {
-                    target = i;
-                    to_be_deleted = compare_neighborhoods(i, neighbor);
-                }
+        if (deleted[i]) {
+            continue;
+        }
+        std::vector<unsigned int> neighbors = graph.neighbors(i);
+        for (unsigned int neighbor: neighbors) {
+            if (neighbor < i or deleted[neighbor]) {
+                continue;
+            }
+            if (graph.degree(i) < graph.degree(neighbor)) {
+                target = neighbor;
+                to_be_deleted = compare_neighborhoods(neighbor, i);
+            } else {
+                target = i;
+                to_be_deleted = compare_neighborhoods(i, neighbor);
             }
             if (to_be_deleted) {
                 dominating.push_back(target);
